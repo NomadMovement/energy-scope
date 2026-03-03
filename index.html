@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>おうちの電気代スコープ</title>
-<link rel="manifest" href="manifest.json">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
+    
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+
     <style>
         :root {
             --bg: #121212;
@@ -37,7 +38,6 @@
         .stat-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 5px; }
         .stat-value { font-weight: bold; color: var(--accent); }
     </style>
-
 </head>
 <body>
 
@@ -49,7 +49,7 @@
 
     <div class="card">
         <button onclick="getLocation()">📍 現在地の単価を特定</button>
-        <div id="status" style="font-size: 0.8rem; text-align: center; color: var(--accent);"></div>
+        <div id="status" style="font-size: 0.8rem; text-align: center; color: var(--accent); min-height: 1.2rem;"></div>
         <div class="price-display" id="unitPrice">--<span class="price-unit">円/kWh</span></div>
         <div style="text-align: center; font-size: 0.8rem; color: var(--text-dim);">燃料調整費・再エネ賦課金(3.45円)込の目安</div>
     </div>
@@ -81,62 +81,8 @@
             約 -- 円 / 月
         </div>
     </div>
-</div>
 
-<script>
-let rate = 31; // 初期値
-const areaRates = { "北海道":36.5, "東北":32.8, "東京":34.2, "中部":30.5, "北陸":26.3, "関西":28.1, "中国":31.8, "四国":31.4, "九州":25.8, "沖縄":38.6 };
-
-async function getLocation() {
-    const status = document.getElementById('status');
-    status.innerText = "GPSスキャン中...";
-    
-    if (!navigator.geolocation) {
-        status.innerText = "GPS未対応のブラウザです";
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-            const data = await res.json();
-            const pref = data.address.province || data.address.state || "東京";
-            
-            // 深夜割引の簡易ロジック（23時〜7時は10%引きとするシミュレーション）
-            const hour = new Date().getHours();
-            let timeDiscount = (hour >= 23 || hour < 7) ? 0.9 : 1.0;
-
-            for (let key in areaRates) {
-                if (pref.includes(key)) {
-                    rate = (areaRates[key] + 3.45) * timeDiscount;
-                    break;
-                }
-            }
-
-            document.getElementById('unitPrice').innerHTML = `${rate.toFixed(1)}<span class="price-unit">円/kWh</span>`;
-            status.innerText = `エリア判定成功: ${pref} ${timeDiscount < 1 ? ' (深夜割引適用中)' : ''}`;
-            updateCustom();
-        } catch (e) {
-            status.innerText = "通信エラーが発生しました";
-        }
-    }, () => {
-        status.innerText = "位置情報の許可が必要です";
-    });
-}
-
-function updateCustom() {
-    const w = document.getElementById('customW').value;
-    const hourCost = (w / 1000) * rate;
-    const dayCost = hourCost * 24;
-    
-    document.getElementById('costHour').innerText = `${hourCost.toFixed(1)} 円`;
-    document.getElementById('costDay').innerText = `${Math.round(dayCost)} 円`;
-
-    const kwh = document.getElementById('familySize').value;
-    const monthly = Math.round(kwh * rate);
-    document.getElementById('monthlyTotal').innerText = `約 ${monthly.toLocaleString()} 円 / 月`;
-}
-<div class="card" style="text-align: left; line-height: 1.6;">
+    <div class="card" style="text-align: left; line-height: 1.6;">
         <h3>💡 すぐにできる節電のコツ</h3>
         <ul style="font-size: 0.9rem; padding-left: 20px;">
             <li><strong>エアコン:</strong> フィルターを月2回掃除するだけで約4%の節電になります。</li>
@@ -148,28 +94,4 @@ function updateCustom() {
         </p>
     </div>
 
-    <div style="margin-top: 40px; padding: 20px; font-size: 0.7rem; color: var(--text-dim); border-top: 1px solid #333;">
-        <h4>プライバシーポリシー</h4>
-        <p>当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」および広告配信サービス「Googleアドセンス」を利用しています。これらはトラフィックデータの収集や広告配信のためにCookie（クッキー）を使用することがあります。Cookieを無効にすることで収集を拒否することが可能です。詳細はブラウザの設定をご確認ください。</p>
-        <p>運営者：[Nomad Movement]</p>
-    </div>
-<div style="margin-top: 50px; padding: 30px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 0.8rem; color: var(--text-dim); text-align: center;">
-        <h4 style="color: var(--text); margin-bottom: 15px;">当サイトについて</h4>
-        <p>「おうちの電気代スコープ」は、日々の生活に欠かせない電気代を身近に感じ、節電意識を高めるための個人開発ツールです。</p>
-        
-        <div style="margin: 20px 0;">
-            <a href="ここにGoogleフォームのURLを貼る" target="_blank" style="color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 8px 20px; border-radius: 20px;">
-                📩 お問い合わせフォーム
-            </a>
-        </div>
-
-        <div style="border-top: 1px solid #333; margin-top: 20px; pt-20px; font-size: 0.7rem;">
-            <p>運営者：[あなたのニックネーム]</p>
-            <p><a href="#privacy" style="color: var(--text-dim);">プライバシーポリシー</a></p>
-            <p>&copy; 2026 Energy Scope Project</p>
-        </div>
-    </div>
-</script>
-
-</body>
-</html>
+    <div style="margin-top: 50px; padding: 30px 15px;
