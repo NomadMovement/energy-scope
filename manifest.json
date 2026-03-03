@@ -6,10 +6,10 @@
   "background_color": "#121212",
   "theme_color": "#00d1b2",
   "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  {
+    "src": "https://NomadMovement.github.io/energy-scope/icon.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }
+]
 }
