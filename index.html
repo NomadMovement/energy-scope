@@ -94,4 +94,78 @@
         </p>
     </div>
 
-    <div style="margin-top: 50px; padding: 30px 15px;
+    <div style="margin-top: 50px; padding: 30px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 0.8rem; color: var(--text-dim); text-align: center;">
+        <h4 style="color: var(--text); margin-bottom: 15px;">当サイトについて</h4>
+        <p>「おうちの電気代スコープ」は、日々の生活に欠かせない電気代を身近に感じ、節電意識を高めるための個人開発ツールです。</p>
+        
+        <div style="margin: 20px 0;">
+            <a href="https://forms.gle/KqM7BhLsDxq3Ym2H6" target="_blank" style="color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 8px 20px; border-radius: 20px;">
+                📩 お問い合わせフォーム
+            </a>
+        </div>
+
+        <div id="privacy" style="border-top: 1px solid #333; margin-top: 20px; padding-top: 20px; font-size: 0.7rem;">
+            <h4>プライバシーポリシー</h4>
+            <p>当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」および広告配信サービス「Googleアドセンス」を利用しています。これらはトラフィックデータの収集や広告配信のためにCookie（クッキー）を使用することがあります。Cookieを無効にすることで収集を拒否することが可能です。詳細はブラウザの設定をご確認ください。</p>
+            <p>運営者：Nomad Movement</p>
+            <p>&copy; 2026 Energy Scope Project</p>
+        </div>
+    </div>
+</div>
+
+<script>
+let rate = 31; 
+const areaRates = { "北海道":36.5, "東北":32.8, "東京":34.2, "中部":30.5, "北陸":26.3, "関西":28.1, "中国":31.8, "四国":31.4, "九州":25.8, "沖縄":38.6 };
+
+async function getLocation() {
+    const status = document.getElementById('status');
+    status.innerText = "GPSスキャン中...";
+    
+    if (!navigator.geolocation) {
+        status.innerText = "GPS未対応のブラウザです";
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+            const data = await res.json();
+            const pref = data.address.province || data.address.state || "東京";
+            
+            const hour = new Date().getHours();
+            let timeDiscount = (hour >= 23 || hour < 7) ? 0.9 : 1.0;
+
+            for (let key in areaRates) {
+                if (pref.includes(key)) {
+                    rate = (areaRates[key] + 3.45) * timeDiscount;
+                    break;
+                }
+            }
+
+            document.getElementById('unitPrice').innerHTML = `${rate.toFixed(1)}<span class="price-unit">円/kWh</span>`;
+            status.innerText = `エリア判定成功: ${pref} ${timeDiscount < 1 ? ' (深夜割引適用中)' : ''}`;
+            updateCustom();
+        } catch (e) {
+            status.innerText = "通信エラーが発生しました";
+        }
+    }, () => {
+        status.innerText = "位置情報の許可が必要です";
+    });
+}
+
+function updateCustom() {
+    const w = document.getElementById('customW').value;
+    const hourCost = (w / 1000) * rate;
+    const dayCost = hourCost * 24;
+    
+    document.getElementById('costHour').innerText = `${hourCost.toFixed(1)} 円`;
+    document.getElementById('costDay').innerText = `${Math.round(dayCost)} 円`;
+
+    const kwh = document.getElementById('familySize').value;
+    const monthly = Math.round(kwh * rate);
+    document.getElementById('monthlyTotal').innerText = `約 ${monthly.toLocaleString()} 円 / 月`;
+}
+</script>
+
+</body>
+</html>
