@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>おうちの電気代スコープ</title>
+    <title>おうちの電気代スコープ | 2026年最新版</title>
     
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="https://NomadMovement.github.io/energy-scope/icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
@@ -17,177 +17,33 @@
 
     <style>
         :root {
-            --bg: #121212;
-            --card: #1e1e1e;
+            --bg: #0f0f0f;
+            --card: #1a1a1a;
             --primary: #00d1b2;
             --accent: #ffdd57;
+            --danger: #ff3860;
             --text: #ffffff;
-            --text-dim: #b5b5b5;
-            --twitter: #1da1f2;
+            --text-dim: #999;
+            --twitter: #000000;
             --line: #06c755;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         .app-container { max-width: 450px; margin: auto; }
-        .header { padding: 20px 0; text-align: center; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .price-display { font-size: 3rem; font-weight: 800; color: var(--primary); text-align: center; margin: 10px 0; }
-        .price-unit { font-size: 1rem; color: var(--text-dim); }
+        .header { padding: 25px 0; text-align: center; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid #333; }
         
-        button { width: 100%; background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 10px; }
-        select, input { width: 100%; padding: 12px; background: #333; border: 1px solid #444; border-radius: 8px; color: white; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
+        /* 動的な色変化クラス */
+        .price-display { font-size: 3.2rem; font-weight: 800; text-align: center; margin: 10px 0; transition: color 0.5s ease; }
+        .price-display.low { color: var(--primary); } 
+        .price-display.mid { color: var(--accent); }
+        .price-display.high { color: var(--danger); }
+        .price-unit { font-size: 1rem; color: var(--text-dim); margin-left: 5px; }
         
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .stat-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; text-align: center; }
+        button { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s; }
+        button:active { transform: scale(0.98); }
+        select, input { width: 100%; padding: 14px; background: #2a2a2a; border: 1px solid #444; border-radius: 10px; color: white; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #333; }
         .stat-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 5px; }
-        .stat-value { font-weight: bold; color: var(--accent); }
-
-        /* シェアボタン用スタイル */
-        .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn-share { padding: 10px; border-radius: 8px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: bold; color: white; }
-        .btn-x { background: #000; border: 1px solid #333; }
-        .btn-line { background: var(--line); }
-    </style>
-</head>
-<body>
-
-<div class="app-container">
-    <div class="header">
-        <h1>⚡️ Energy Scope</h1>
-        <p style="color:var(--text-dim)">電気代を「見える化」して節電</p>
-    </div>
-
-    <div class="card">
-        <label>🔌 料金プランを選択</label>
-        <select id="planSelect" onchange="updateByPlan()">
-            <option value="auto">📍 現在地から自動判定 (大手電力)</option>
-            <option value="31">全国平均レベル (31.0円)</option>
-            <option value="27">新電力・安価プラン (27.0円)</option>
-            <option value="40">市場連動・高騰時 (40.0円)</option>
-        </select>
-        <button id="locBtn" onclick="getLocation()">現在地の単価を特定</button>
-        <div id="status" style="font-size: 0.8rem; text-align: center; color: var(--accent); min-height: 1.2rem;"></div>
-        <div class="price-display" id="unitPrice">--<span class="price-unit">円/kWh</span></div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-dim);">再エネ賦課金(3.45円)込の目安</div>
-    </div>
-
-    <div class="card">
-        <h3>🏠 世帯別・月額目安</h3>
-        <select id="familySize" onchange="updateCustom()">
-            <option value="250">1人暮らし (250kWh)</option>
-            <option value="370" selected>2人世帯 (370kWh)</option>
-            <option value="450">4人家族 (450kWh)</option>
-        </select>
-        <div style="text-align: center; font-size: 1.5rem; font-weight: bold; color: var(--primary);" id="monthlyTotal">
-            約 -- 円 / 月
-        </div>
-
-        <div class="share-grid">
-            <a id="shareX" href="#" target="_blank" class="btn-share btn-x">Xでシェア</a>
-            <a id="shareLine" href="#" target="_blank" class="btn-share btn-line">LINEで送る</a>
-        </div>
-    </div>
-
-    <div class="card">
-        <h3>💡 家電別シミュレーター</h3>
-        <label>使用する家電のワット数(W)</label>
-        <input type="number" id="customW" value="1000" oninput="updateCustom()">
-        <div class="grid">
-            <div class="stat-box">
-                <div class="stat-label">1時間あたり</div>
-                <div class="stat-value" id="costHour">-- 円</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">24時間あたり</div>
-                <div class="stat-value" id="costDay">-- 円</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card" style="text-align: left; line-height: 1.6;">
-        <h3>💡 節電のヒント</h3>
-        <ul style="font-size: 0.9rem; padding-left: 20px;">
-            <li><strong>電力会社の見直し:</strong> 自由化以降、ライフスタイルに合ったプランを選ぶだけで年間数万円安くなる場合があります。</li>
-            <li><strong>待機電力:</strong> 使わない家電のコンセントを抜く習慣で、全体の数%を削減可能です。</li>
-        </ul>
-    </div>
-
-    <div style="margin-top: 50px; padding: 30px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 0.8rem; color: var(--text-dim); text-align: center;">
-        <div style="margin: 20px 0;">
-            <a href="https://forms.gle/KqM7BhLsDxq3Ym2H6" target="_blank" style="color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 8px 20px; border-radius: 20px;">
-                📩 お問い合わせフォーム
-            </a>
-        </div>
-        <div id="privacy" style="border-top: 1px solid #333; padding-top: 20px;">
-            <p>運営者：Nomad Movement</p>
-            <p><a href="#" style="color: var(--text-dim);">プライバシーポリシー</a></p>
-            <p>&copy; 2026 Energy Scope</p>
-        </div>
-    </div>
-</div>
-
-<script>
-let rate = 31; 
-const areaRates = { "北海道":36.5, "東北":32.8, "東京":34.2, "中部":30.5, "北陸":26.3, "関西":28.1, "中国":31.8, "四取":31.4, "九州":25.8, "沖縄":38.6 };
-
-function updateByPlan() {
-    const plan = document.getElementById('planSelect').value;
-    if (plan !== "auto") {
-        rate = parseFloat(plan) + 3.45;
-        document.getElementById('status').innerText = "カスタムプラン適用中";
-        document.getElementById('unitPrice').innerHTML = `${rate.toFixed(1)}<span class="price-unit">円/kWh</span>`;
-        updateCustom();
-    }
-}
-
-async function getLocation() {
-    const status = document.getElementById('status');
-    status.innerText = "GPSスキャン中...";
-    if (!navigator.geolocation) { status.innerText = "GPS未対応です"; return; }
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-            const data = await res.json();
-            const pref = data.address.province || data.address.state || "東京";
-            const hour = new Date().getHours();
-            let timeDiscount = (hour >= 23 || hour < 7) ? 0.9 : 1.0;
-
-            for (let key in areaRates) {
-                if (pref.includes(key)) {
-                    rate = (areaRates[key] + 3.45) * timeDiscount;
-                    break;
-                }
-            }
-            document.getElementById('unitPrice').innerHTML = `${rate.toFixed(1)}<span class="price-unit">円/kWh</span>`;
-            status.innerText = `判定エリア: ${pref} ${timeDiscount < 1 ? '(深夜割)' : ''}`;
-            document.getElementById('planSelect').value = "auto";
-            updateCustom();
-        } catch (e) { status.innerText = "通信エラー"; }
-    }, () => { status.innerText = "位置情報を許可してください"; });
-}
-
-function updateCustom() {
-    const w = document.getElementById('customW').value;
-    const hourCost = (w / 1000) * rate;
-    const dayCost = hourCost * 24;
-    document.getElementById('costHour').innerText = `${hourCost.toFixed(1)} 円`;
-    document.getElementById('costDay').innerText = `${Math.round(dayCost)} 円`;
-
-    const kwh = document.getElementById('familySize').value;
-    const monthly = Math.round(kwh * rate);
-    const monthlyText = `約 ${monthly.toLocaleString()} 円 / 月`;
-    document.getElementById('monthlyTotal').innerText = monthlyText;
-
-    // シェアリンクの更新
-    const shareText = encodeURIComponent(`私の地域の電気代単価は ${rate.toFixed(1)}円/kWh でした！\n世帯月額目安は ${monthlyText} です。⚡️\n#おうちの電気代スコープ #節電`);
-    const shareUrl = encodeURIComponent(window.location.href);
-    document.getElementById('shareX').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-    document.getElementById('shareLine').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
-}
-
-// 初期実行
-updateCustom();
-</script>
-
-</body>
-</html>
+        .stat-value { font-size: 1.1rem; font
