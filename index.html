@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342180697133185"
-     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>おうちの電気代スコープ | 2026年最新版</title>
-    
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0880395645702011" crossorigin="anonymous"></script>
+
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
     <script>
@@ -26,44 +26,41 @@
             --danger: #ff3860;
             --text: #ffffff;
             --text-dim: #999;
-            --twitter: #000000;
-            --line: #06c755;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         .app-container { max-width: 450px; margin: auto; }
         .header { padding: 25px 0; text-align: center; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid #333; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #333; }
         
-        /* 動的な色変化クラス */
         .price-display { font-size: 3.2rem; font-weight: 800; text-align: center; margin: 10px 0; transition: color 0.5s ease; }
         .price-display.low { color: var(--primary); } 
         .price-display.mid { color: var(--accent); }
         .price-display.high { color: var(--danger); }
         .price-unit { font-size: 1rem; color: var(--text-dim); margin-left: 5px; }
         
-        button { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s; }
-        button:active { transform: scale(0.98); }
-        select, input { width: 100%; padding: 14px; background: #2a2a2a; border: 1px solid #444; border-radius: 10px; color: white; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px; }
+        select, input { width: 100%; padding: 14px; background: #2a2a2a; border: 1px solid #444; border-radius: 10px; color: white; margin-bottom: 15px; box-sizing: border-box; }
         
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #333; }
-        .stat-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 5px; }
         .stat-value { font-size: 1.1rem; font-weight: bold; color: var(--accent); }
 
         .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn-share { padding: 12px; border-radius: 10px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: bold; color: white; }
+        .btn-share { padding: 12px; border-radius: 10px; text-decoration: none; font-weight: bold; color: white; text-align: center; font-size: 0.85rem; }
         .btn-x { background: #000; border: 1px solid #444; }
-        .btn-line { background: var(--line); }
-        
-        .badge-subsidy { background: var(--danger); font-size: 0.7rem; padding: 2px 8px; border-radius: 5px; vertical-align: middle; margin-left: 10px; }
+        .btn-line { background: #06c755; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
+    <div style="text-align: center; margin-bottom: 15px; min-height: 50px;">
+        <p style="font-size: 0.6rem; color: #666; margin: 0;">ADVERTISEMENT</p>
+    </div>
+
     <div class="header">
         <h1>⚡️ Energy Scope</h1>
-        <p style="color:var(--text-dim)">2026年最新ロジック対応版</p>
+        <p style="color:var(--text-dim)">2026年最新ロジック & AdSense対応</p>
     </div>
 
     <div class="card">
@@ -85,7 +82,6 @@
         <div id="status" style="font-size: 0.8rem; text-align: center; color: var(--accent); min-height: 1.2rem; margin-bottom: 10px;"></div>
         
         <div class="price-display mid" id="unitPrice">--<span class="price-unit">円/kWh</span></div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-dim);">再エネ賦課金(3.49円)・燃料費込</div>
     </div>
 
     <div class="card">
@@ -95,9 +91,7 @@
             <option value="370" selected>2人世帯 (約370kWh)</option>
             <option value="450">4人家族 (約450kWh)</option>
         </select>
-        <div style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary);" id="monthlyTotal">
-            約 -- 円 / 月
-        </div>
+        <div style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary);" id="monthlyTotal">約 -- 円 / 月</div>
 
         <div class="share-grid">
             <a id="shareX" href="#" target="_blank" class="btn-share btn-x">Xでシェア</a>
@@ -111,114 +105,34 @@
         <input type="number" id="customW" value="1000" oninput="updateCustom()">
         <div class="grid">
             <div class="stat-box">
-                <div class="stat-label">1時間あたり</div>
+                <div class="stat-label" style="font-size:0.7rem">1時間あたり</div>
                 <div class="stat-value" id="costHour">-- 円</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">24時間あたり</div>
+                <div class="stat-label" style="font-size:0.7rem">24時間あたり</div>
                 <div class="stat-value" id="costDay">-- 円</div>
             </div>
         </div>
     </div>
 
-    <div class="card" style="text-align: left; line-height: 1.6;">
-        <h3>💡 2026年の節電アドバイス</h3>
-        <p style="font-size: 0.9rem;">2026年は再エネ賦課金の微増や市場価格の変動が続いています。補助金の有無を確認し、ピーク時間帯（夕方など）の使用を控えるのが効果的です。</p>
-    </div>
-
     <div style="margin-top: 40px; padding: 25px 15px; background: rgba(255,255,255,0.02); border-radius: 15px; font-size: 0.75rem; color: var(--text-dim); text-align: center; border-top: 1px solid #333;">
-        <a href="https://forms.gle/KqM7BhLsDxq3Ym2H6" target="_blank" style="color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 20px;">
-            📩 お問い合わせフォーム
-        </a>
-        <div id="privacy">
-            <p>運営：Nomad Movement</p>
-            <p>当サイトはGoogleアドセンス及びアナリティクスを使用しています。Cookieにより匿名データを収集しますが、個人を特定するものではありません。</p>
-            <p>&copy; 2026 Energy Scope Project</p>
-        </div>
+        <p>運営：Nomad Movement</p>
+        <p>当サイトはGoogle AdSense及びAnalyticsを使用しています。Cookieにより匿名データを収集しますが、個人を特定するものではありません。</p>
+        <p>&copy; 2026 Energy Scope Project</p>
     </div>
 </div>
 
 <script>
-let baseRate = 32; 
-const areaRates = { 
-    "北海道": 37.2, "東北": 33.5, "東京": 35.1, "中部": 31.2, 
-    "北陸": 27.5, "関西": 29.3, "中国": 32.5, "四国": 32.1, 
-    "九州": 26.5, "沖縄": 39.2 
-};
-const RENEWABLE_ENERGY_FEE = 3.49; // 2026年再エネ賦課金目安
+let baseRate = 35.1; // 東京電力ベース
+const areaRates = { "北海道": 37.2, "東北": 33.5, "東京": 35.1, "中部": 31.2, "北陸": 27.5, "関西": 29.3, "中国": 32.5, "四国": 32.1, "九州": 26.5, "沖縄": 39.2 };
+const RENEWABLE_ENERGY_FEE = 3.49;
 
 function updateByPlan() {
     const plan = document.getElementById('planSelect').value;
-    if (plan !== "auto") {
-        baseRate = parseFloat(plan);
-        document.getElementById('status').innerText = "カスタムプラン適用中";
-        updateCustom();
-    }
+    if (plan !== "auto") { baseRate = parseFloat(plan); updateCustom(); }
 }
 
 async function getLocation() {
     const status = document.getElementById('status');
     status.innerText = "GPSスキャン中...";
-    if (!navigator.geolocation) { status.innerText = "GPS未対応"; return; }
-
     navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-            const data = await res.json();
-            const pref = data.address.province || data.address.state || "東京";
-            const hour = new Date().getHours();
-            let timeDiscount = (hour >= 23 || hour < 7) ? 0.9 : 1.0;
-
-            for (let key in areaRates) {
-                if (pref.includes(key)) {
-                    baseRate = areaRates[key] * timeDiscount;
-                    break;
-                }
-            }
-            document.getElementById('planSelect').value = "auto";
-            status.innerText = `判定エリア: ${pref} ${timeDiscount < 1 ? '(夜間割)' : ''}`;
-            updateCustom();
-        } catch (e) { status.innerText = "エリア判定失敗"; }
-    }, () => { status.innerText = "位置許可が必要です"; });
-}
-
-function updateCustom() {
-    const w = document.getElementById('customW').value;
-    const subsidy = parseFloat(document.getElementById('subsidy').value);
-    
-    // 実質単価（地域単価 + 賦課金 + 補助金）
-    const finalRate = baseRate + RENEWABLE_ENERGY_FEE + subsidy;
-
-    // 単価表示と色の変化
-    const display = document.getElementById('unitPrice');
-    display.innerHTML = `${finalRate.toFixed(1)}<span class="price-unit">円/kWh</span>`;
-    
-    display.classList.remove('low', 'mid', 'high');
-    if (finalRate < 31) display.classList.add('low');
-    else if (finalRate < 37) display.classList.add('mid');
-    else display.classList.add('high');
-
-    // 計算
-    const hourCost = (w / 1000) * finalRate;
-    const dayCost = hourCost * 24;
-    document.getElementById('costHour').innerText = `${hourCost.toFixed(1)} 円`;
-    document.getElementById('costDay').innerText = `${Math.round(dayCost)} 円`;
-
-    const kwh = document.getElementById('familySize').value;
-    const monthly = Math.round(kwh * finalRate);
-    const monthlyText = `約 ${monthly.toLocaleString()} 円 / 月`;
-    document.getElementById('monthlyTotal').innerText = monthlyText;
-
-    // シェア更新
-    const shareText = encodeURIComponent(`【2026年最新】私の地域の電気代は ${finalRate.toFixed(1)}円/kWh でした！\n世帯目安は ${monthlyText} です。⚡️\n#おうちの電気代スコープ #節電`);
-    const shareUrl = encodeURIComponent(window.location.href);
-    document.getElementById('shareX').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-    document.getElementById('shareLine').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
-}
-
-// 初期化
-updateCustom();
-</script>
-
-</body>
-</html>
