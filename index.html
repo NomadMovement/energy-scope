@@ -27,10 +27,10 @@
             --text: #ffffff;
             --text-dim: #999;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         .app-container { max-width: 450px; margin: auto; }
         .header { padding: 25px 0; text-align: center; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #333; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         
         .price-display { font-size: 3.2rem; font-weight: 800; text-align: center; margin: 10px 0; transition: color 0.5s ease; }
         .price-display.low { color: var(--primary); } 
@@ -38,15 +38,17 @@
         .price-display.high { color: var(--danger); }
         .price-unit { font-size: 1rem; color: var(--text-dim); margin-left: 5px; }
         
-        button { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px; }
-        select, input { width: 100%; padding: 14px; background: #2a2a2a; border: 1px solid #444; border-radius: 10px; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        button { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        select, input { width: 100%; padding: 14px; background: #2a2a2a; border: 1px solid #444; border-radius: 10px; color: white; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
         
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #333; }
+        .stat-label { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; }
         .stat-value { font-size: 1.1rem; font-weight: bold; color: var(--accent); }
 
         .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn-share { padding: 12px; border-radius: 10px; text-decoration: none; font-weight: bold; color: white; text-align: center; font-size: 0.85rem; }
+        .btn-share { padding: 12px; border-radius: 10px; text-decoration: none; font-weight: bold; color: white; text-align: center; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
         .btn-x { background: #000; border: 1px solid #444; }
         .btn-line { background: #06c755; }
     </style>
@@ -75,4 +77,143 @@
         <label>🎁 政府補助金設定</label>
         <select id="subsidy" onchange="updateCustom()">
             <option value="0">補助金なし</option>
-            <option value="-2.5">政府補助金あり (-2.5
+            <option value="-2.5">政府補助金あり (-2.5円/kWh)</option>
+        </select>
+
+        <button onclick="getLocation()">現在地の単価を特定 (GPS)</button>
+        <div id="status" style="font-size: 0.8rem; text-align: center; color: var(--accent); min-height: 1.2rem; margin-bottom: 10px;"></div>
+        
+        <div class="price-display mid" id="unitPrice">--<span class="price-unit">円/kWh</span></div>
+    </div>
+
+    <div class="card">
+        <h3>🏠 世帯別・月額目安</h3>
+        <select id="familySize" onchange="updateCustom()">
+            <option value="250">1人暮らし (約250kWh)</option>
+            <option value="370" selected>2人世帯 (約370kWh)</option>
+            <option value="450">4人家族 (約450kWh)</option>
+        </select>
+        <div style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary);" id="monthlyTotal">約 -- 円 / 月</div>
+
+        <div class="share-grid">
+            <a id="shareX" href="#" target="_blank" class="btn-share btn-x">Xでシェア</a>
+            <a id="shareLine" href="#" target="_blank" class="btn-share btn-line">LINEで送る</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>💡 家電別シミュレーター</h3>
+        <label>家電の消費電力(W)</label>
+        <input type="number" id="customW" value="1000" oninput="updateCustom()">
+        <div class="grid">
+            <div class="stat-box">
+                <div class="stat-label">1時間あたり</div>
+                <div class="stat-value" id="costHour">-- 円</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">24時間あたり</div>
+                <div class="stat-value" id="costDay">-- 円</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; padding: 25px 15px; background: rgba(255,255,255,0.02); border-radius: 15px; font-size: 0.75rem; color: var(--text-dim); text-align: center; border-top: 1px solid #333;">
+        <p>運営：Nomad Movement</p>
+        <p>当サイトはGoogle AdSense及びAnalyticsを使用しています。<br>Cookieにより匿名データを収集しますが、個人を特定するものではありません。</p>
+        <p>&copy; 2026 Energy Scope Project</p>
+    </div>
+</div>
+
+<script>
+let baseRate = 35.1; 
+const areaRates = { "北海道": 37.2, "東北": 33.5, "東京": 35.1, "中部": 31.2, "北陸": 27.5, "関西": 29.3, "中国": 32.5, "四国": 32.1, "九州": 26.5, "沖縄": 39.2 };
+const RENEWABLE_ENERGY_FEE = 3.49;
+
+function updateByPlan() {
+    const plan = document.getElementById('planSelect').value;
+    if (plan !== "auto") {
+        baseRate = parseFloat(plan);
+        document.getElementById('status').innerText = "カスタム単価適用中";
+        updateCustom();
+    }
+}
+
+function getLocation() {
+    const status = document.getElementById('status');
+    status.innerText = "GPSスキャン中...";
+
+    if (!navigator.geolocation) {
+        status.innerText = "お使いのブラウザはGPS非対応です";
+        return;
+    }
+
+    const options = { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 };
+
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            status.innerText = "位置特定。地域を判定中...";
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+                const data = await res.json();
+                const addr = data.address;
+                const pref = addr.province || addr.state || addr.city || addr.town || "東京";
+                
+                let hit = false;
+                for (let key in areaRates) {
+                    if (pref.includes(key)) {
+                        baseRate = areaRates[key];
+                        status.innerText = `判定完了: ${pref}電力エリア`;
+                        hit = true;
+                        break;
+                    }
+                }
+                if(!hit) status.innerText = `判定エリア: ${pref} (標準単価適用)`;
+                
+                document.getElementById('planSelect').value = "auto";
+                updateCustom();
+            } catch (e) {
+                status.innerText = "地域判定に失敗しました";
+            }
+        },
+        (err) => {
+            switch(err.code) {
+                case err.PERMISSION_DENIED: status.innerText = "位置情報の利用を許可してください"; break;
+                case err.TIMEOUT: status.innerText = "GPS取得タイムアウト。再試行してください"; break;
+                default: status.innerText = "GPSエラーが発生しました"; break;
+            }
+        },
+        options
+    );
+}
+
+function updateCustom() {
+    const w = document.getElementById('customW').value;
+    const subsidy = parseFloat(document.getElementById('subsidy').value);
+    const finalRate = baseRate + RENEWABLE_ENERGY_FEE + subsidy;
+    
+    const display = document.getElementById('unitPrice');
+    display.innerHTML = `${finalRate.toFixed(1)}<span class="price-unit">円/kWh</span>`;
+    
+    display.classList.remove('low', 'mid', 'high');
+    if (finalRate < 31) display.classList.add('low');
+    else if (finalRate < 37) display.classList.add('mid');
+    else display.classList.add('high');
+
+    const hourCost = (w / 1000) * finalRate;
+    document.getElementById('costHour').innerText = `${hourCost.toFixed(1)} 円`;
+    document.getElementById('costDay').innerText = `${Math.round(hourCost * 24)} 円`;
+
+    const kwh = document.getElementById('familySize').value;
+    const monthlyText = `約 ${(Math.round(kwh * finalRate)).toLocaleString()} 円 / 月`;
+    document.getElementById('monthlyTotal').innerText = monthlyText;
+
+    const shareText = encodeURIComponent(`私の地域の電気代目安：${monthlyText} ⚡️ #おうちの電気代スコープ`);
+    const shareUrl = encodeURIComponent(window.location.href);
+    document.getElementById('shareX').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+    document.getElementById('shareLine').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
+}
+
+updateCustom();
+</script>
+</body>
+</html>
