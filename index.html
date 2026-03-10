@@ -54,13 +54,13 @@
 <body>
 
 <div class="app-container">
-    <div style="text-align: center; margin-bottom: 15px; min-height: 50px;">
+    <div style="text-align: center; margin-bottom: 15px; min-height: 20px;">
         <p style="font-size: 0.6rem; color: #666; margin: 0;">ADVERTISEMENT</p>
     </div>
 
     <div class="header">
         <h1>⚡️ Energy Scope</h1>
-        <p style="color:var(--text-dim)">2026年最新ロジック & AdSense対応</p>
+        <p style="color:var(--text-dim)">2026年最新ロジック対応</p>
     </div>
 
     <div class="card">
@@ -75,64 +75,4 @@
         <label>🎁 政府補助金設定</label>
         <select id="subsidy" onchange="updateCustom()">
             <option value="0">補助金なし</option>
-            <option value="-2.5">政府補助金あり (-2.5円/kWh)</option>
-        </select>
-
-        <button onclick="getLocation()">現在地の単価を特定 (GPS)</button>
-        <div id="status" style="font-size: 0.8rem; text-align: center; color: var(--accent); min-height: 1.2rem; margin-bottom: 10px;"></div>
-        
-        <div class="price-display mid" id="unitPrice">--<span class="price-unit">円/kWh</span></div>
-    </div>
-
-    <div class="card">
-        <h3>🏠 世帯別・月額目安</h3>
-        <select id="familySize" onchange="updateCustom()">
-            <option value="250">1人暮らし (約250kWh)</option>
-            <option value="370" selected>2人世帯 (約370kWh)</option>
-            <option value="450">4人家族 (約450kWh)</option>
-        </select>
-        <div style="text-align: center; font-size: 1.8rem; font-weight: bold; color: var(--primary);" id="monthlyTotal">約 -- 円 / 月</div>
-
-        <div class="share-grid">
-            <a id="shareX" href="#" target="_blank" class="btn-share btn-x">Xでシェア</a>
-            <a id="shareLine" href="#" target="_blank" class="btn-share btn-line">LINEで送る</a>
-        </div>
-    </div>
-
-    <div class="card">
-        <h3>💡 家電別シミュレーター</h3>
-        <label>家電の消費電力(W)</label>
-        <input type="number" id="customW" value="1000" oninput="updateCustom()">
-        <div class="grid">
-            <div class="stat-box">
-                <div class="stat-label" style="font-size:0.7rem">1時間あたり</div>
-                <div class="stat-value" id="costHour">-- 円</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label" style="font-size:0.7rem">24時間あたり</div>
-                <div class="stat-value" id="costDay">-- 円</div>
-            </div>
-        </div>
-    </div>
-
-    <div style="margin-top: 40px; padding: 25px 15px; background: rgba(255,255,255,0.02); border-radius: 15px; font-size: 0.75rem; color: var(--text-dim); text-align: center; border-top: 1px solid #333;">
-        <p>運営：Nomad Movement</p>
-        <p>当サイトはGoogle AdSense及びAnalyticsを使用しています。Cookieにより匿名データを収集しますが、個人を特定するものではありません。</p>
-        <p>&copy; 2026 Energy Scope Project</p>
-    </div>
-</div>
-
-<script>
-let baseRate = 35.1; // 東京電力ベース
-const areaRates = { "北海道": 37.2, "東北": 33.5, "東京": 35.1, "中部": 31.2, "北陸": 27.5, "関西": 29.3, "中国": 32.5, "四国": 32.1, "九州": 26.5, "沖縄": 39.2 };
-const RENEWABLE_ENERGY_FEE = 3.49;
-
-function updateByPlan() {
-    const plan = document.getElementById('planSelect').value;
-    if (plan !== "auto") { baseRate = parseFloat(plan); updateCustom(); }
-}
-
-async function getLocation() {
-    const status = document.getElementById('status');
-    status.innerText = "GPSスキャン中...";
-    navigator.geolocation.getCurrentPosition(async (pos) => {
+            <option value="-2.5">政府補助金あり (-2.5
