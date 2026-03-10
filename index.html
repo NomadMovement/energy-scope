@@ -147,11 +147,9 @@ function getLocation() {
         return;
     }
 
-    const options = { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 };
-
     navigator.geolocation.getCurrentPosition(
         async (pos) => {
-            status.innerText = "位置特定。地域を判定中...";
+            status.innerText = "地域を判定中...";
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
                 const data = await res.json();
@@ -167,22 +165,18 @@ function getLocation() {
                         break;
                     }
                 }
-                if(!hit) status.innerText = `判定エリア: ${pref} (標準単価適用)`;
+                if(!hit) status.innerText = `判定エリア: ${pref}`;
                 
                 document.getElementById('planSelect').value = "auto";
                 updateCustom();
             } catch (e) {
-                status.innerText = "地域判定に失敗しました";
+                status.innerText = "判定失敗（通信エラー）";
             }
         },
         (err) => {
-            switch(err.code) {
-                case err.PERMISSION_DENIED: status.innerText = "位置情報の利用を許可してください"; break;
-                case err.TIMEOUT: status.innerText = "GPS取得タイムアウト。再試行してください"; break;
-                default: status.innerText = "GPSエラーが発生しました"; break;
-            }
+            status.innerText = "GPS取得エラー（許可してください）";
         },
-        options
+        { timeout: 8000 }
     );
 }
 
@@ -204,10 +198,10 @@ function updateCustom() {
     document.getElementById('costDay').innerText = `${Math.round(hourCost * 24)} 円`;
 
     const kwh = document.getElementById('familySize').value;
-    const monthlyText = `約 ${(Math.round(kwh * finalRate)).toLocaleString()} 円 / 月`;
-    document.getElementById('monthlyTotal').innerText = monthlyText;
+    const monthlyTotal = Math.round(kwh * finalRate);
+    document.getElementById('monthlyTotal').innerText = `約 ${monthlyTotal.toLocaleString()} 円 / 月`;
 
-    const shareText = encodeURIComponent(`私の地域の電気代目安：${monthlyText} ⚡️ #おうちの電気代スコープ`);
+    const shareText = encodeURIComponent(`私の地域の電気代目安：約 ${monthlyTotal.toLocaleString()}円 ⚡️ #おうちの電気代スコープ`);
     const shareUrl = encodeURIComponent(window.location.href);
     document.getElementById('shareX').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
     document.getElementById('shareLine').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
